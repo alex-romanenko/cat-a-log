@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 typedef void OnDismissedCallback(DismissDirection direction);
 
 class CatItem extends StatelessWidget {
-  const CatItem({this.key, this.onItemDismissed}) : super(key: key);
+  const CatItem({@required this.key, this.onItemDismissed, this.catImage})
+      : super(key: key);
 
   final Key key;
   final onItemDismissed;
+  final Image catImage;
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
       child: ListTile(
-        title: Text('Some Name'),
+        title: catImage,
       ),
       background: Container(
         color: Colors.green,
