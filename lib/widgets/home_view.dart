@@ -20,7 +20,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     _catApi = CatApi();
-    _futureCats = _catApi.fetchCats(page: _page);
+    _futureCats = _catApi.fetchCats();
   }
 
   @override
@@ -33,7 +33,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Catflip'),
+          title: Text('Cat Viewer 9000'),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.refresh),
@@ -44,14 +44,14 @@ class _HomeViewState extends State<HomeView> {
         body: FutureBuilder<List<Cat>>(
           future: _futureCats,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data.length > 0) {
               _loadedCats = snapshot.data;
               return _buildItemList();
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
 
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           },
         ));
   }
@@ -59,16 +59,27 @@ class _HomeViewState extends State<HomeView> {
   Widget _buildItemList() {
     return ListView.builder(
       itemCount: _loadedCats.length,
+      scrollDirection: Axis.horizontal,
       itemBuilder: (context, i) {
         var cat = _loadedCats[i];
 
         return CatItem(
           key: ValueKey(cat.id),
-          catImage: Image.network(cat.url),
+          catImage: Image.network(
+            cat.url,
+          ),
           onItemDismissed: (direction) {
             setState(() {
               _loadedCats.removeAt(i);
+
+              if (_loadedCats.length == 0) {
+                fetchCats();
+              }
             });
+
+            // Show a snackbar. This snackbar could also contain "Undo" actions.
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text('Item dismissed')));
           },
         );
       },
