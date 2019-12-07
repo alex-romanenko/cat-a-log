@@ -1,7 +1,8 @@
 import 'package:catflip/models/cat.dart';
-import 'package:catflip/services/cat_api.dart';
+import 'package:catflip/services/cat_api_service.dart';
 import 'package:catflip/widgets/cat_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({Key key}) : super(key: key);
@@ -13,20 +14,15 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   Future<List<Cat>> _futureCats;
   List<Cat> _loadedCats = List<Cat>();
-  CatApi _catApi;
+  CatApiService _catApi;
   int _page = 0;
 
   @override
-  void initState() {
-    super.initState();
-    _catApi = CatApi();
+  void didChangeDependencies() {
+    _catApi = Provider.of<CatApiService>(context);
     _futureCats = _catApi.fetchCats();
-  }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _catApi.dispose();
+    super.didChangeDependencies();
   }
 
   @override
@@ -34,12 +30,6 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Cat Viewer 9000'),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: fetchCats,
-            ),
-          ],
         ),
         body: FutureBuilder<List<Cat>>(
           future: _futureCats,
@@ -71,7 +61,6 @@ class _HomeViewState extends State<HomeView> {
           onItemDismissed: (direction) {
             setState(() {
               _loadedCats.removeAt(i);
-
               if (_loadedCats.length == 0) {
                 fetchCats();
               }
@@ -79,7 +68,7 @@ class _HomeViewState extends State<HomeView> {
 
             // Show a snackbar. This snackbar could also contain "Undo" actions.
             Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text('Item dismissed')));
+                .showSnackBar(SnackBar(content: Text(direction.toString())));
           },
         );
       },
@@ -87,9 +76,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void fetchCats() {
-    setState(() {
-      _page++;
-      _futureCats = _catApi.fetchCats(page: _page);
-    });
+    _futureCats = _catApi.fetchCats(page: _page);
+    _page++;
   }
 }

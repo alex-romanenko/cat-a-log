@@ -4,10 +4,19 @@ class Cat {
 
   Cat({this.id, this.url});
 
-  factory Cat.fromJson(Map<String, dynamic> json) {
+  // GET /images/search
+  factory Cat.fromJsonSearch(Map<String, dynamic> json) {
     return Cat(
       id: json['id'],
       url: json['url'],
+    );
+  }
+
+  // GET /favourites
+  factory Cat.fromJsonFavourite(Map<String, dynamic> json) {
+    return Cat(
+      id: json['image']['id'],
+      url: json['image']['url'],
     );
   }
 }

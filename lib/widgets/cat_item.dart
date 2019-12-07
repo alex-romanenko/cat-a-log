@@ -7,7 +7,7 @@ class CatItem extends StatelessWidget {
       : super(key: key);
 
   final Key key;
-  final onItemDismissed;
+  final OnDismissedCallback onItemDismissed;
   final Image catImage;
 
   @override
