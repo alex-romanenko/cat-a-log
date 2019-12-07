@@ -1,5 +1,6 @@
 import 'package:catflip/models/cat.dart';
 import 'package:catflip/services/cat_api_service.dart';
+import 'package:catflip/views/favourites_view.dart';
 import 'package:catflip/widgets/cat_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,20 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Cat Viewer 9000'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.list),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) {
+                      return FavouritesView();
+                    },
+                  ),
+                );
+              },
+            )
+          ],
         ),
         body: FutureBuilder<List<Cat>>(
           future: _futureCats,
@@ -38,7 +53,7 @@ class _HomeViewState extends State<HomeView> {
               _loadedCats = snapshot.data;
               return _buildItemList();
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              return Center(child: Text('${snapshot.error}'));
             }
 
             return Center(child: CircularProgressIndicator());
@@ -60,7 +75,14 @@ class _HomeViewState extends State<HomeView> {
           ),
           onItemDismissed: (direction) {
             setState(() {
-              _loadedCats.removeAt(i);
+              var dismissedCat = _loadedCats.removeAt(i);
+
+              if (direction == DismissDirection.startToEnd) {
+                _catApi.addFavourite(dismissedCat.id);
+              } else {
+                // TODO: downvote
+              }
+
               if (_loadedCats.length == 0) {
                 fetchCats();
               }
