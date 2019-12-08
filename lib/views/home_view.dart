@@ -1,4 +1,5 @@
 import 'package:catflip/models/cat.dart';
+import 'package:catflip/providers/theme_changer.dart';
 import 'package:catflip/services/cat_api_service.dart';
 import 'package:catflip/views/favourites_view.dart';
 import 'package:catflip/widgets/cat_item.dart';
@@ -27,10 +28,19 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    var isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Cat Viewer 9000'),
           actions: <Widget>[
+            IconButton(
+              icon: Icon(isDarkTheme ? Icons.brightness_7 : Icons.brightness_3),
+              onPressed: () {
+                var themeChanger = Provider.of<ThemeChanger>(context);
+                themeChanger.toggleTheme();
+              },
+            ),
             IconButton(
               icon: Icon(Icons.list),
               onPressed: () {
@@ -42,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
         body: FutureBuilder<List<Cat>>(
