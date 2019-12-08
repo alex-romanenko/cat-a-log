@@ -16,6 +16,12 @@ class CatItem extends StatelessWidget {
 
     return Dismissible(
       child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: ExactAssetImage('assets/images/cats.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
         width: media.size.width,
         height: media.size.height,
         alignment: Alignment.center,
