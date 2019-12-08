@@ -15,12 +15,12 @@ class _FavouritesViewState extends State<FavouritesView> {
       appBar: AppBar(
         title: Text('My Favourites'),
       ),
-      body: _getItems(),
+      body: _getItems(context),
     );
   }
 
-  Widget _getItems() {
-    final catApi = Provider.of<CatApiService>(context, listen: false);
+  Widget _getItems(BuildContext context) {
+    final catApi = Provider.of<CatApiService>(context);
 
     return FutureBuilder<List<Cat>>(
       future: catApi.getFavourites(),
@@ -30,19 +30,21 @@ class _FavouritesViewState extends State<FavouritesView> {
             return Center(child: Text('No favourites...'));
           }
 
-          return GridView.builder(
-            itemCount: snapshot.data.length,
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 150,
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 5,
-            ),
-            padding: const EdgeInsets.all(5),
-            itemBuilder: (context, i) {
-              var cat = snapshot.data[i];
+          return Scrollbar(
+            child: GridView.builder(
+              itemCount: snapshot.data.length,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 150,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+              ),
+              padding: const EdgeInsets.all(5),
+              itemBuilder: (context, i) {
+                var cat = snapshot.data[i];
 
-              return _buildGridTile(cat);
-            },
+                return _buildGridTile(context, cat);
+              },
+            ),
           );
         } else if (snapshot.hasError) {
           return Center(child: Text('${snapshot.error}'));
@@ -53,7 +55,7 @@ class _FavouritesViewState extends State<FavouritesView> {
     );
   }
 
-  Widget _buildGridTile(Cat cat) {
+  Widget _buildGridTile(BuildContext context, Cat cat) {
     return GridTile(
         child: Image.network(
           cat.url,
@@ -73,17 +75,19 @@ class _FavouritesViewState extends State<FavouritesView> {
 
               response.then((result) {
                 if (result) {
-                  // TODO: show success
+                  _showSnackBar(context, 'Item removed from favourites');
                 } else {
-                  // TODO: show error
+                  _showSnackBar(context, 'An error occured');
                 }
               });
-
-              // // Show a snackbar. This snackbar could also contain "Undo" actions.
-              // Scaffold.of(context).showSnackBar(
-              //     SnackBar(content: Text('Item removed from favourites')));
             },
           ),
         ));
+  }
+
+  // Requires outer widget BuildContext
+  void _showSnackBar(BuildContext context, String message) {
+    // This snackbar could also contain "Undo" actions.
+    Scaffold.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }

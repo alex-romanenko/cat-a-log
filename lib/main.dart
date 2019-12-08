@@ -1,5 +1,5 @@
 import 'package:catflip/services/cat_api_service.dart';
-import 'package:catflip/widgets/home_view.dart';
+import 'package:catflip/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

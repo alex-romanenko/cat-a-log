@@ -20,8 +20,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void didChangeDependencies() {
-    _catApi = Provider.of<CatApiService>(context);
-    _futureCats = _catApi.fetchCats();
+    _fetchCats();
 
     super.didChangeDependencies();
   }
@@ -79,13 +78,12 @@ class _HomeViewState extends State<HomeView> {
 
               if (direction == DismissDirection.startToEnd) {
                 _catApi.addFavourite(dismissedCat.id);
+                // TODO: upvote
               } else {
                 // TODO: downvote
               }
 
-              if (_loadedCats.length == 0) {
-                fetchCats();
-              }
+              _fetchCats();
             });
           },
         );
@@ -93,8 +91,13 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  void fetchCats() {
-    _futureCats = _catApi.fetchCats(page: _page);
-    _page++;
+  void _fetchCats() {
+    if (_catApi == null) {
+      _catApi = Provider.of<CatApiService>(context);
+    }
+    if (_loadedCats.length == 0) {
+      _futureCats = _catApi.getCats(page: _page);
+      _page++;
+    }
   }
 }
