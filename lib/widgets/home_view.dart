@@ -87,10 +87,6 @@ class _HomeViewState extends State<HomeView> {
                 fetchCats();
               }
             });
-
-            // Show a snackbar. This snackbar could also contain "Undo" actions.
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text(direction.toString())));
           },
         );
       },

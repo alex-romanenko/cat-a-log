@@ -30,18 +30,18 @@ class _FavouritesViewState extends State<FavouritesView> {
             return Center(child: Text('No favourites...'));
           }
 
-          return ListView.builder(
+          return GridView.builder(
             itemCount: snapshot.data.length,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 150,
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 5,
+            ),
+            padding: const EdgeInsets.all(5),
             itemBuilder: (context, i) {
               var cat = snapshot.data[i];
-              return Container(
-                padding: EdgeInsets.all(5),
-                height: 300,
-                alignment: Alignment.center,
-                child: Image.network(
-                  cat.url,
-                ),
-              );
+
+              return _buildGridTile(cat);
             },
           );
         } else if (snapshot.hasError) {
@@ -51,5 +51,39 @@ class _FavouritesViewState extends State<FavouritesView> {
         return Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  Widget _buildGridTile(Cat cat) {
+    return GridTile(
+        child: Image.network(
+          cat.url,
+          fit: BoxFit.cover,
+        ),
+        header: GridTileBar(
+          //backgroundColor: Colors.black38,
+          title: SizedBox(),
+          trailing: GestureDetector(
+            child: Icon(
+              Icons.star,
+              color: Colors.yellowAccent,
+            ),
+            onTap: () {
+              final catApi = Provider.of<CatApiService>(context);
+              final response = catApi.removeFavourite(cat.id);
+
+              response.then((result) {
+                if (result) {
+                  // TODO: show success
+                } else {
+                  // TODO: show error
+                }
+              });
+
+              // // Show a snackbar. This snackbar could also contain "Undo" actions.
+              // Scaffold.of(context).showSnackBar(
+              //     SnackBar(content: Text('Item removed from favourites')));
+            },
+          ),
+        ));
   }
 }
