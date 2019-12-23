@@ -18,20 +18,17 @@ class ThemeChanger with ChangeNotifier {
     notifyListeners();
   }
 
-  ThemeData _getLightTheme() {
+  static ThemeData _getLightTheme() {
     return ThemeData(
         brightness: Brightness.light,
         textTheme: ThemeData.light().textTheme.apply(fontFamily: 'Open Sans'));
   }
 
-  ThemeData _getDarkTheme() {
+  static ThemeData _getDarkTheme() {
     return ThemeData(
         brightness: Brightness.dark,
         textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Open Sans'));
   }
 
-  /// Initializes ThemeChanger with a default dark theme.
-  factory ThemeChanger.defaultTheme() => ThemeChanger(ThemeData(
-      brightness: Brightness.dark,
-      textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Open Sans')));
+  factory ThemeChanger.defaultTheme() => ThemeChanger(_getDarkTheme());
 }
